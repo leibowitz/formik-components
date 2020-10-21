@@ -7,14 +7,17 @@ const Item = SortableElement(({ children }: { children: React.ReactNode }) => (
 ))
 
 const SortableList = SortableContainer(
-  ({ renderItem, value, array, name }: any) => {
+  ({ renderItem, value, array, name, keyFunc }: any) => {
     return (
       <div>
-        {value.map((_: any, i: number) => (
-          <Item key={i} index={i}>
-            {renderItem(i, false, array, name + "." + i + ".")}
-          </Item>
-        ))}
+        {value.map((item: any, i: number) => {
+          const keyVal = keyFunc ? keyFunc(item) : i;
+          return (
+            <Item key={keyVal} index={i}>
+              {renderItem(i, false, array, name + "." + i + ".")}
+            </Item>
+          )
+        })}
       </div>
     )
   },
@@ -23,6 +26,7 @@ const SortableList = SortableContainer(
 interface Props {
   name: string
   renderNewPlaceholder: boolean
+  keyFunc: (item: any) => string
   renderItem: (
     i: number,
     isLast: boolean,
@@ -35,6 +39,7 @@ export function SortableArray({
   name,
   renderNewPlaceholder,
   renderItem,
+  keyFunc
 }: Props) {
   return (
     <Field name={name}>
@@ -63,6 +68,7 @@ export function SortableArray({
                     value={value}
                     array={array}
                     name={name}
+                    keyFunc={keyFunc}
                     onSortEnd={({
                       oldIndex,
                       newIndex,
